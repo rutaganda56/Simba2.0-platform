@@ -22,21 +22,16 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body className={`${geist.className} ${geistMono.className} antialiased bg-background text-foreground`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <NextIntlClientProvider messages={messages} locale={locale}>
-            <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900">
-              <Navbar />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-            </div>
-          </NextIntlClientProvider>
-          {process.env.NODE_ENV === 'production' && <Analytics />}
-        </ThemeProvider>
-      </body>
-    </html>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <NextIntlClientProvider messages={messages} locale={locale}>
+        <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900">
+          <Navbar />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </div>
+      </NextIntlClientProvider>
+    </ThemeProvider>
   );
 }
