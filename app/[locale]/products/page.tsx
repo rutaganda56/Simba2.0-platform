@@ -2,10 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import ProductCard from '@/components/products/ProductCard';
-import { getAllCategories, searchProducts, getProductsByCategory } from '@/lib/products';
-import products from '@/data/products.json';
+import { getCategories, getProducts } from '@/actions/products';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
@@ -22,12 +21,14 @@ export default function ProductsPage() {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
-  const categories = getAllCategories();
+  const [products, setProducts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Debounced search
   const debouncedSearch = useCallback(
     debounce((query: string) => {
-      // Search is handled in the filtering logic
+      // Search is handled by the searchQuery state change triggering useEffect
     }, 300),
     []
   );
@@ -37,29 +38,31 @@ export default function ProductsPage() {
     debouncedSearch(query);
   };
 
-  const filteredProducts = useMemo(() => {
-    let result = [...products];
+  // Fetch initial data
+  useEffect(() => {
+    getCategories().then(setCategories);
+  }, []);
 
-    // Apply search
-    if (searchQuery) {
-      result = searchProducts(searchQuery);
-    }
+  // Fetch products based on filters
+  useEffect(() => {
+    setLoading(true);
+    const fetchProducts = async () => {
+      const result = await getProducts({
+        query: searchQuery || undefined,
+        category: selectedCategory || undefined,
+        minPrice: priceRange[0],
+        maxPrice: priceRange[1],
+        inStockOnly: inStockOnly || undefined,
+      });
 
-    // Apply category filter
-    if (selectedCategory) {
-      result = result.filter((p) => p.category === selectedCategory);
-    }
+      setProducts(result);
+      setLoading(false);
+    };
 
-    // Apply price filter
-    result = result.filter((p) => p.price >= priceRange[0] && p.price <= priceRange[1]);
-
-    // Apply stock filter
-    if (inStockOnly) {
-      result = result.filter((p) => p.inStock);
-    }
-
-    return result;
+    fetchProducts();
   }, [searchQuery, selectedCategory, priceRange, inStockOnly]);
+
+  const filteredProducts = products;
 
   const containerVariants = {
     hidden: { opacity: 0 },

@@ -7,7 +7,7 @@ import { useCart } from '@/lib/store';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
-import { Product } from '@/lib/products';
+import { Product } from '@/actions/products';
 import { Plus, Minus } from 'lucide-react';
 
 interface ProductCardProps {
@@ -79,8 +79,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
 
-          <CardContent className="p-3 md:p-4 flex-1 flex flex-col">
-            <h3 className="font-semibold text-sm md:text-base text-gray-900 dark:text-white mb-1 line-clamp-2 min-h-[2.5rem]">
+          <CardContent className="p-3 md:p-4 flex-1 flex flex-col bg-white dark:bg-slate-800">
+            <h3 className="font-medium text-xs md:text-sm text-gray-700 dark:text-gray-300 mb-1 line-clamp-2 min-h-[2.5rem] leading-snug group-hover:text-green-600 transition-colors">
               {product.name}
             </h3>
             
@@ -91,16 +91,16 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </span>
               </div>
 
-              {/* Getir-style Add Button */}
+              {/* Interaction Row */}
               {quantity === 0 ? (
                 <motion.button
                   onClick={handleAdd}
                   disabled={!product.inStock}
                   whileTap={{ scale: 0.95 }}
-                  className={`w-full py-2 md:py-2.5 rounded-lg font-semibold transition-all text-sm md:text-base flex items-center justify-center gap-2 ${
+                  className={`w-full py-2 rounded-xl font-bold transition-all text-xs md:text-sm flex items-center justify-center gap-2 border-2 ${
                     !product.inStock
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-green-600 text-white hover:bg-green-700 shadow-md hover:shadow-lg'
+                      ? 'bg-gray-100 text-gray-400 border-gray-100 cursor-not-allowed'
+                      : 'bg-white text-green-600 border-green-500 hover:bg-green-500 hover:text-white shadow-sm'
                   }`}
                 >
                   <Plus className="w-4 h-4" />
@@ -108,24 +108,24 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </motion.button>
               ) : (
                 <motion.div
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: 1 }}
-                  className="flex items-center justify-between bg-green-600 rounded-lg p-1 shadow-md"
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="flex items-center justify-between bg-green-600 rounded-xl p-0.5 shadow-lg shadow-green-200 dark:shadow-none"
                 >
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={handleDecrement}
-                    className="w-8 h-8 md:w-9 md:h-9 bg-white rounded-md flex items-center justify-center text-green-600 hover:bg-gray-100 transition"
+                    className="w-8 h-8 md:w-9 md:h-9 bg-white rounded-lg flex items-center justify-center text-green-600 hover:bg-gray-50 transition shadow-sm"
                   >
                     <Minus className="w-4 h-4" />
                   </motion.button>
-                  <span className="text-white font-bold text-base md:text-lg px-2">
+                  <span className="text-white font-black text-sm md:text-base px-2 tabular-nums">
                     {quantity}
                   </span>
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={handleIncrement}
-                    className="w-8 h-8 md:w-9 md:h-9 bg-white rounded-md flex items-center justify-center text-green-600 hover:bg-gray-100 transition"
+                    className="w-8 h-8 md:w-9 md:h-9 bg-white rounded-lg flex items-center justify-center text-green-600 hover:bg-gray-50 transition shadow-sm"
                   >
                     <Plus className="w-4 h-4" />
                   </motion.button>

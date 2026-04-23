@@ -6,11 +6,21 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
-import { getFeaturedProducts } from '@/lib/products';
+import { getFeaturedProducts } from '@/actions/products';
+
+import { useState, useEffect } from 'react';
 
 export default function ProductShowcase() {
   const t = useTranslations();
-  const products = getFeaturedProducts(5);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getFeaturedProducts(5).then((data) => {
+      setProducts(data);
+      setLoading(false);
+    });
+  }, []);
 
   return (
     <section className="relative bg-gradient-to-br from-purple-300 via-purple-200 to-purple-300 dark:from-purple-400 dark:via-purple-300 dark:to-purple-400 overflow-hidden py-20">
@@ -78,7 +88,7 @@ export default function ProductShowcase() {
           >
             {/* Product arrangement - center, left, right */}
             <div className="relative w-full h-full flex items-center justify-center">
-              {products.slice(0, 5).map((product, index) => {
+              {!loading && products.slice(0, 5).map((product, index) => {
                 const positions = [
                   { left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 30, scale: 1.2 },
                   { left: '15%', top: '45%', transform: 'translate(-50%, -50%)', zIndex: 20, scale: 1 },
@@ -88,7 +98,6 @@ export default function ProductShowcase() {
                 ];
                 
                 const position = positions[index] || positions[0];
-                const delay = index * 0.5;
                 
                 return (
                   <motion.div
@@ -98,39 +107,51 @@ export default function ProductShowcase() {
                     }}
                     transition={{ 
                       duration: 3 + index * 0.3, 
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: delay
+                      repeat: Infinity, 
+                      ease: "easeInOut" 
                     }}
-                    className="absolute w-24 h-32 md:w-32 md:h-40"
+                    initial={{ opacity: 0, x: 100 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
                     style={{
+                      position: 'absolute',
                       left: position.left,
                       top: position.top,
                       transform: position.transform,
                       zIndex: position.zIndex,
                     }}
+                    className="w-48 h-64 md:w-56 md:h-72"
                   >
-                    <div className="relative w-full h-full" style={{ transform: `scale(${position.scale})` }}>
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        fill
-                        className="object-contain drop-shadow-2xl"
-                      />
+                    <div className="relative w-full h-full group">
+                      <motion.div 
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        className="relative w-full h-full drop-shadow-2xl transition-all duration-500"
+                      >
+                        <Image 
+                          src={product.image}
+                          alt={product.name}
+                          fill
+                          className="object-contain"
+                        />
+                      </motion.div>
                     </div>
                   </motion.div>
                 );
               })}
+              
+              {loading && (
+                <div className="w-48 h-64 bg-white/20 animate-pulse rounded-2xl" />
+              )}
             </div>
 
             {/* Decorative elements */}
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute top-10 right-10 w-12 h-12 opacity-50"
-            >
-              <Image src="/placeholder.jpg" alt="Kiwi" fill className="object-contain" />
-            </motion.div>
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute top-10 right-10 w-12 h-12 opacity-80"
+              >
+                <Image src="https://images.unsplash.com/photo-1585059895181-42e126225de0?w=100&h=100&fit=crop" alt="Kiwi" fill className="object-contain drop-shadow-lg" />
+              </motion.div>
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}

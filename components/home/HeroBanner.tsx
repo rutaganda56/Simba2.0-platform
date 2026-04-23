@@ -33,10 +33,10 @@ export default function HeroBanner() {
               transition={{ delay: 0.2 }}
             >
               <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">
-                Superfoods
+                Rwanda&apos;s Favourite Supermarket, Now Online
               </h1>
               <p className="text-xl md:text-2xl text-white/90 mb-8">
-                {t('home.hero')}
+                Order for pick-up at any of our 8 Kigali branches. Ready in 30 minutes.
               </p>
             </motion.div>
 
@@ -48,9 +48,9 @@ export default function HeroBanner() {
               <Link href="/products">
                 <Button 
                   size="lg" 
-                  className="bg-yellow-400 text-gray-900 hover:bg-yellow-500 font-bold text-lg px-10 py-6 rounded-full shadow-2xl hover:shadow-yellow-400/50 transition-all duration-300"
+                  className="bg-yellow-400 text-gray-900 hover:bg-yellow-500 font-extrabold text-lg px-10 py-7 rounded-full shadow-2xl hover:shadow-yellow-400/50 transition-all duration-300"
                 >
-                  {t('home.shopNow')}
+                  Start Shopping
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
@@ -80,10 +80,11 @@ export default function HeroBanner() {
                   className="relative w-48 h-64"
                 >
                   <Image
-                    src="/placeholder.jpg"
-                    alt="Product"
+                    src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80"
+                    alt="Fresh Organic Food"
                     fill
                     className="object-contain drop-shadow-2xl"
+                    priority
                   />
                 </motion.div>
               </div>
@@ -92,16 +93,16 @@ export default function HeroBanner() {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute top-10 right-10 w-16 h-16 opacity-50"
+                className="absolute top-10 right-10 w-16 h-16 opacity-80"
               >
-                <Image src="/placeholder.jpg" alt="Kiwi" fill className="object-contain" />
+                <Image src="https://images.unsplash.com/photo-1585059895181-42e126225de0?w=100&h=100&fit=crop" alt="Kiwi" fill className="object-contain drop-shadow-lg" />
               </motion.div>
               <motion.div
                 animate={{ y: [0, 20, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute bottom-10 left-10 w-16 h-16 opacity-50"
+                className="absolute bottom-10 left-10 w-16 h-16 opacity-80"
               >
-                <Image src="/placeholder.jpg" alt="Lemon" fill className="object-contain" />
+                <Image src="https://images.unsplash.com/photo-1590502593747-42a996131d82?w=100&h=100&fit=crop" alt="Lemon" fill className="object-contain drop-shadow-lg" />
               </motion.div>
             </div>
           </motion.div>

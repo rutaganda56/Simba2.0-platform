@@ -6,11 +6,14 @@ import { useTheme } from 'next-themes';
 import { useCart } from '@/lib/store';
 import { Link } from '@/routing';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Sun, Moon, ShoppingCart, Search } from 'lucide-react';
+import { Menu, X, Sun, Moon, ShoppingCart, Search, User, LogOut, History, ChevronDown } from 'lucide-react';
 import { useRouter } from '@/routing';
+import { useSession, signOut } from 'next-auth/react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export default function Navbar() {
   const t = useTranslations();
+  const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
   const { getItemCount } = useCart();
   const itemCount = getItemCount();
@@ -68,8 +71,8 @@ export default function Navbar() {
                 {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </button>
               
-              <Link href="/cart" className="relative">
-                <Button variant="ghost" size="lg" className="flex items-center gap-2 h-auto py-2 px-3">
+              <Link href="/cart" className="relative mr-2">
+                <Button variant="ghost" size="lg" className="flex items-center gap-2 h-auto py-2 px-3 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-xl">
                   <div className="relative">
                     <ShoppingCart className="w-6 h-6" />
                     {itemCount > 0 && (
@@ -80,6 +83,62 @@ export default function Navbar() {
                   </div>
                 </Button>
               </Link>
+
+              {session ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-10 w-full flex items-center gap-2 px-3 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-xl">
+                      <div className="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center overflow-hidden">
+                        {session.user?.image ? (
+                          <img src={session.user.image} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-4 h-4 text-teal-700 dark:text-teal-400" />
+                        )}
+                      </div>
+                      <span className="max-w-[100px] truncate font-medium text-sm text-gray-700 dark:text-gray-300">
+                        {session.user?.name || 'Account'}
+                      </span>
+                      <ChevronDown className="w-4 h-4 text-gray-500" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 mt-2 rounded-xl shadow-xl border-gray-100 dark:border-slate-800">
+                    <DropdownMenuLabel className="font-normal p-4">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-bold leading-none">{session.user?.name}</p>
+                        <p className="text-xs leading-none text-gray-500">{session.user?.email}</p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/history" className="flex items-center gap-2 cursor-pointer p-3 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/30 text-gray-700 dark:text-gray-300">
+                        <History className="w-4 h-4" />
+                        <span>Order History</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={() => signOut()}
+                      className="flex items-center gap-2 cursor-pointer p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Log out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link href="/login">
+                    <Button variant="ghost" className="font-semibold text-gray-700 dark:text-gray-300 hover:text-teal-700">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button className="bg-teal-700 hover:bg-teal-800 text-white font-bold rounded-xl px-4 py-2">
+                      Register
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Mobile Menu Button */}

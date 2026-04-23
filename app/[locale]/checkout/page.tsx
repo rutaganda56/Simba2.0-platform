@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Link } from '@/routing';
 import { useRouter } from '@/routing';
+import { createOrder } from '@/actions/orders';
+import { useSession } from 'next-auth/react';
 
 interface CheckoutFormData {
   firstName: string;
@@ -28,9 +30,11 @@ const SECTORS = ['Sector 1', 'Sector 2', 'Sector 3', 'Sector 4', 'Sector 5'];
 
 export default function CheckoutPage() {
   const t = useTranslations();
+  const { data: session } = useSession();
   const { items, getTotal, clearCart } = useCart();
   const router = useRouter();
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<CheckoutFormData>({
     firstName: '',
     lastName: '',
@@ -85,13 +89,41 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleConfirmOrder = () => {
-    const newOrderId = `ORD-${Date.now()}`;
-    setOrderId(newOrderId);
-    clearCart();
-    setTimeout(() => {
-      router.push('/checkout/success?order=' + newOrderId);
-    }, 2000);
+  const handleConfirmOrder = async () => {
+    setIsSubmitting(true);
+    try {
+      const result = await createOrder({
+        items: items.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity
+        })),
+        total,
+        paymentMethod: formData.paymentMethod,
+        momoNumber: formData.momoNumber,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+      });
+
+      if (result.success) {
+        setOrderId(result.orderId);
+        clearCart();
+        setTimeout(() => {
+          router.push('/checkout/success?order=' + result.orderId);
+        }, 1000);
+      } else {
+        alert('Order failed: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Order creation failed:', error);
+      alert('Order failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const subtotal = getTotal();
@@ -319,8 +351,11 @@ export default function CheckoutPage() {
                     <Button
                       className="flex-1 bg-green-600 hover:bg-green-700"
                       onClick={handleNext}
+                      disabled={isSubmitting}
                     >
-                      {step === 2 ? t('checkout.confirmOrder') : t('checkout.next')}
+                      {step === 2 
+                        ? (isSubmitting ? 'Processing...' : t('checkout.confirmOrder')) 
+                        : t('checkout.next')}
                     </Button>
                   </div>
                 )}

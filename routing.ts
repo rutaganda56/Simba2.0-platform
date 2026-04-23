@@ -21,6 +21,21 @@ export const routing = defineRouting({
       fr: '/paiement',
       rw: '/kurekura',
     },
+    '/login': {
+      en: '/login',
+      fr: '/connexion',
+      rw: '/kwinjira',
+    },
+    '/register': {
+      en: '/register',
+      fr: '/inscription',
+      rw: '/kwiyandikisha',
+    },
+    '/history': {
+      en: '/history',
+      fr: '/historique',
+      rw: '/amateka',
+    },
   },
 });
 

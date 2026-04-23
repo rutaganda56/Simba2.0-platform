@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Analytics } from '@vercel/analytics/next';
 import { ThemeProvider } from 'next-themes';
+import AuthProvider from '@/components/providers/SessionProvider';
 import '../globals.css';
 import { Geist, Geist_Mono } from 'next/font/google';
 
@@ -22,9 +23,10 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <NextIntlClientProvider messages={messages} locale={locale}>
-        <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900">
+    <AuthProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <NextIntlClientProvider messages={messages} locale={locale}>
+          <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900">
           <Navbar />
           <main className="flex-1">
             {children}
@@ -33,5 +35,6 @@ export default async function LocaleLayout({
         </div>
       </NextIntlClientProvider>
     </ThemeProvider>
+    </AuthProvider>
   );
 }

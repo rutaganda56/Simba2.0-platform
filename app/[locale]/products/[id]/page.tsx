@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { getProductById, getRelatedProducts } from '@/lib/products';
+import { getProductById, getRelatedProducts } from '@/actions/products';
 import ProductCard from '@/components/products/ProductCard';
 import { useCart } from '@/lib/store';
 import { Button } from '@/components/ui/button';
@@ -14,16 +14,29 @@ import { Link } from '@/routing';
 interface ProductDetailPageProps {
   params: Promise<{ id: string }>;
 }
-
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const resolvedParams = React.use(params);
   const t = useTranslations();
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [product, setProduct] = useState<any>(null);
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const product = getProductById(resolvedParams.id);
-  const relatedProducts = product ? getRelatedProducts(resolvedParams.id, 4) : [];
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const p = await getProductById(resolvedParams.id);
+      if (p) {
+        setProduct(p);
+        const related = await getRelatedProducts(p.category, p.id, 4);
+        setRelatedProducts(related);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, [resolvedParams.id]);
 
   if (!product) {
     return (
@@ -107,18 +120,21 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             className="flex flex-col justify-center space-y-6"
           >
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+              <span className="text-sm font-bold text-green-600 dark:text-green-400 uppercase tracking-widest bg-green-50 dark:bg-green-900/30 px-3 py-1 rounded-full mb-4 inline-block">
+                {t(`categories.${product.category}`)}
+              </span>
+              <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white mt-2 leading-tight">
                 {product.name}
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 text-lg">
-                {t(`categories.${product.category}`)}
-              </p>
             </div>
 
-            <div className="border-y border-gray-200 dark:border-slate-700 py-6">
-              <p className="text-5xl font-bold text-green-600 dark:text-green-400">
-                {product.price.toLocaleString()} {t('common.rwf')}
-              </p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-4xl md:text-5xl font-black text-green-600 dark:text-green-400">
+                {product.price.toLocaleString()}
+              </span>
+              <span className="text-xl font-bold text-gray-500 uppercase">
+                {t('common.rwf')}
+              </span>
             </div>
 
             <div>
@@ -152,18 +168,30 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                 </div>
               </div>
 
-              <Button
-                onClick={handleAddToCart}
-                disabled={!product.inStock}
-                size="lg"
-                className={`w-full ${
-                  addedToCart
-                    ? 'bg-green-600 hover:bg-green-600'
-                    : 'bg-green-600 hover:bg-green-700'
-                }`}
-              >
-                {addedToCart ? '✓ Added to Cart' : t('products.addToCart')}
-              </Button>
+              <div className="pt-6">
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={!product.inStock}
+                  size="lg"
+                  className={`w-full h-14 text-lg font-bold rounded-2xl transition-all duration-300 shadow-lg ${
+                    addedToCart
+                      ? 'bg-green-500 hover:bg-green-500 scale-[1.02]'
+                      : 'bg-green-600 hover:bg-green-700 shadow-green-200 dark:shadow-none'
+                  }`}
+                >
+                  {addedToCart ? (
+                    <motion.span 
+                      initial={{ scale: 0.5 }} 
+                      animate={{ scale: 1 }} 
+                      className="flex items-center gap-2"
+                    >
+                      ✓ {t('cart.added')}
+                    </motion.span>
+                  ) : (
+                    t('products.addToCart')
+                  )}
+                </Button>
+              </div>
             </div>
 
             {!product.inStock && (

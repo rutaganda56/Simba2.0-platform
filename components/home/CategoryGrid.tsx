@@ -3,16 +3,17 @@
 import { useTranslations } from 'next-intl';
 import { Link } from '@/routing';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const CATEGORIES = [
-  { slug: 'fruits', icon: '🍎', color: 'from-red-400 to-red-500' },
-  { slug: 'vegetables', icon: '🥬', color: 'from-green-400 to-green-500' },
-  { slug: 'dairy', icon: '🥛', color: 'from-blue-400 to-blue-500' },
-  { slug: 'meat', icon: '🍗', color: 'from-orange-400 to-orange-500' },
-  { slug: 'bakery', icon: '🍞', color: 'from-yellow-400 to-yellow-500' },
-  { slug: 'beverages', icon: '☕', color: 'from-amber-400 to-amber-500' },
-  { slug: 'snacks', icon: '🍿', color: 'from-pink-400 to-pink-500' },
-  { slug: 'frozen', icon: '🧊', color: 'from-cyan-400 to-cyan-500' },
+  { slug: 'vegetables', image: 'https://images.unsplash.com/photo-1540333677239-ef00f3c61b86?w=200&h=200&fit=crop', color: 'from-emerald-50 to-emerald-100', textColor: 'text-emerald-700' },
+  { slug: 'fruits', image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=200&h=200&fit=crop', color: 'from-orange-50 to-orange-100', textColor: 'text-orange-700' },
+  { slug: 'dairy', image: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=200&h=200&fit=crop', color: 'from-sky-50 to-sky-100', textColor: 'text-sky-700' },
+  { slug: 'meat', image: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=200&h=200&fit=crop', color: 'from-rose-50 to-rose-100', textColor: 'text-rose-700' },
+  { slug: 'bakery', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&h=200&fit=crop', color: 'from-amber-50 to-amber-100', textColor: 'text-amber-700' },
+  { slug: 'beverages', image: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=200&h=200&fit=crop', color: 'from-cyan-50 to-cyan-100', textColor: 'text-cyan-700' },
+  { slug: 'snacks', image: 'https://images.unsplash.com/photo-1621447509323-570aaba038b1?w=200&h=200&fit=crop', color: 'from-violet-50 to-violet-100', textColor: 'text-violet-700' },
+  { slug: 'frozen', image: 'https://images.unsplash.com/photo-1547514701-42782101795e?w=200&h=200&fit=crop', color: 'from-indigo-50 to-indigo-100', textColor: 'text-indigo-700' },
 ];
 
 export default function CategoryGrid() {
@@ -43,12 +44,21 @@ export default function CategoryGrid() {
               viewport={{ once: true }}
             >
               <Link href={`/products?category=${category.slug}`} className="block h-full group">
-                <div className="flex flex-col items-center bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-slate-700 hover:shadow-md hover:border-green-200 transition-all cursor-pointer h-full justify-between">
-                  {/* Icon Container with radial gradient */}
-                  <div className={`w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center text-2xl md:text-3xl shadow-sm mb-2 group-hover:scale-105 transition-transform`}>
-                    {category.icon}
+                <div className="flex flex-col items-center group cursor-pointer">
+                  {/* Image Container with radial gradient (Getir style) */}
+                  <div className={`relative w-24 h-24 md:w-28 md:h-28 rounded-[2rem] bg-indigo-50/50 dark:bg-slate-800 flex items-center justify-center p-4 group-hover:bg-white dark:group-hover:bg-slate-700 group-hover:shadow-2xl group-hover:shadow-indigo-100 dark:group-hover:shadow-none transition-all duration-500 border border-transparent group-hover:border-indigo-100 dark:group-hover:border-slate-600`}>
+                    <div className={`absolute inset-0 rounded-[2rem] bg-gradient-to-br ${category.color} opacity-40 group-hover:opacity-60 transition-opacity`} />
+                    <div className="relative w-full h-full">
+                      <Image 
+                        src={category.image} 
+                        alt={category.slug}
+                        fill
+                        className="object-contain drop-shadow-xl group-hover:scale-110 transition-transform duration-500"
+                        sizes="(max-width: 768px) 80px, 100px"
+                      />
+                    </div>
                   </div>
-                  <span className="text-[11px] md:text-xs font-semibold text-gray-600 dark:text-gray-300 text-center leading-tight">
+                  <span className="mt-3 text-[13px] md:text-sm font-bold text-center leading-tight text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                     {t(`categories.${category.slug}`)}
                   </span>
                 </div>

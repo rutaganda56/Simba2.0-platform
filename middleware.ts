@@ -1,7 +1,14 @@
 import createMiddleware from 'next-intl/middleware';
+import NextAuth from "next-auth";
+import { authConfig } from "./auth.config";
 import { routing } from './routing';
 
-export default createMiddleware(routing);
+const intlMiddleware = createMiddleware(routing);
+const { auth } = NextAuth(authConfig);
+
+export default auth((req) => {
+  return intlMiddleware(req);
+});
 
 export const config = {
   // Match only internationalized pathnames

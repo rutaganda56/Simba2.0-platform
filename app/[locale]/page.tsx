@@ -14,10 +14,9 @@ export default function Home() {
   const t = useTranslations();
 
   const features = [
-    { icon: Truck, title: 'Free Delivery', desc: 'On orders over 50,000 RWF' },
-    { icon: Clock, title: '30 Min Delivery', desc: 'Fast delivery to your door' },
-    { icon: Shield, title: 'Secure Payment', desc: 'Safe & secure checkout' },
-    { icon: Headphones, title: '24/7 Support', desc: 'Always here to help' },
+    { icon: Clock, title: '30-min pick-up', desc: 'Across all 8 branches' },
+    { icon: Shield, title: 'Fresh products daily', desc: 'Quality guaranteed' },
+    { icon: Headphones, title: 'Pay with MoMo', desc: 'Secure mobile payment' },
   ];
 
   return (
@@ -50,13 +49,33 @@ export default function Home() {
         </div>
       </section>
 
-      <CategoryGrid />
-      
-      <FAQ />
-      
-      <ProductShowcase />
-      
       <FeaturedProducts />
+
+      {/* Trust Signals: Branches */}
+      <section className="bg-gray-50 dark:bg-slate-800/50 py-16 border-y border-gray-100 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">8 branches across Kigali</h2>
+            <p className="text-gray-600 dark:text-gray-400">Find us at your nearest location for quick and easy pick-up.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {['Remera', 'Kimironko', 'Kacyiru', 'Nyamirambo', 'Gikondo', 'Kanombe', 'Kinyinya', 'Kibagabaga'].map((branch) => (
+              <motion.div
+                key={branch}
+                whileHover={{ y: -5 }}
+                className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 text-center"
+              >
+                <div className="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-teal-600 dark:text-teal-400 font-bold">#</span>
+                </div>
+                <h4 className="font-bold text-gray-900 dark:text-white">{branch}</h4>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <CategoryGrid />
 
       {/* Newsletter Section */}
       <motion.section
